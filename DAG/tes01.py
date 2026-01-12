@@ -1,47 +1,69 @@
-"""
-Code that goes along with the Airflow tutorial.
-"""
 from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
-from airflow.utils.dates import days_ago
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+from airflow.decorators import dag, task
+from kubernetes.client import models as k8s
 
-default_args = {
-    'owner': 'airflow',
-    'start_date': days_ago(2),
-}
 
-with DAG(
-    dag_id='airflow_tutorial_v01',
-    default_args=default_args,
-    description='A simple tutorial DAG',
-    schedule_interval=None, # Set to None for manual triggers, or a cron expression like '@daily'
-    tags=['example'],
-) as dag:
-
-    # Task 1: Print the execution date
-    t1 = BashOperator(
-        task_id='print_date',
-        bash_command='echo {{ ds }}',
+default_executor_config = {
+    "pod_override": k8s.V1Pod(
+        spec=k8s.V1PodSpec(
+            containers=[
+                k8s.V1Container(
+                    name="base",
+                    resources=k8s.V1ResourceRequirements(
+                        requests={"cpu": "100m", "memory": "128Mi"},
+                        limits={"cpu": "200m", "memory": "256Mi"}
+                    )
+                )
+            ]
+        )
     )
+} # end of default_executor_config
 
-    # Task 2: Sleep for 5 seconds and print 'Done'
-    t2 = BashOperator(
-        task_id='sleep',
-        bash_command='sleep 5 && echo "Done"',
+with DAG(dag_id="hello_world_dag",
+         start_date=datetime(2024,3,27),
+         schedule="@hourly",
+         catchup=False) as dag:
+
+    @task(
+        task_id="hello_world",
+        executor_config=default_executor_config
     )
+    def hello_world():
+        print('Hello World - From Github Repository')
 
-    # Task 3: Create a templated command that prints the dag run's logical date
-    templated_command = """
-    {% for i in range(5) %}
-        echo "{{ ds }}"
-        echo "{{ macros.ds_add(ds, i) }}"
-    {% endfor %}
-    """
 
-    t3 = BashOperator(
-        task_id='templated',
-        bash_command=templated_command,
+
+    @task.bash(
+        task_id="sleep",
     )
+    def sleep_task() -> str:
+        return "sleep 10"
 
-    # Set task dependencies
-    t1 >> [t2, t3] # t1 runs first, then t2 and t3 run in parallel
+
+    @task(
+        task_id="done",
+        #executor_config=default_executor_config
+    )
+    def done():
+        print('Done')
+
+
+    @task(
+        task_id="goodbye_world",
+    )
+    def goodbye_world():
+        print('Goodbye World - From Github Repository')
+
+
+    hello_world_task = hello_world()
+    sleep_task = sleep_task()
+    goodbye_world_task = goodbye_world()
+    done_task = done()
+
+
+    hello_world_task >> sleep_task >> goodbye_world_task >> done_task
+
+             

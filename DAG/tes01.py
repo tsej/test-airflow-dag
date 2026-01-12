@@ -1,52 +1,47 @@
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-import time
+"""
+Code that goes along with the Airflow tutorial.
+"""
+from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
+from airflow.utils.dates import days_ago
 
-from airflow.models import DAG
-from airflow.operators.dummy import DummyOperator
-from airflow.utils.timezone import datetime
+default_args = {
+    'owner': 'airflow',
+    'start_date': days_ago(2),
+}
 
+with DAG(
+    dag_id='airflow_tutorial_v01',
+    default_args=default_args,
+    description='A simple tutorial DAG',
+    schedule_interval=None, # Set to None for manual triggers, or a cron expression like '@daily'
+    tags=['example'],
+) as dag:
 
-class DummyWithOnKill(DummyOperator):
-    def execute(self, context):
-        import os
+    # Task 1: Print the execution date
+    t1 = BashOperator(
+        task_id='print_date',
+        bash_command='echo {{ ds }}',
+    )
 
-        self.log.info("Signalling that I am running")
-        # signal to the test that we've started
-        with open("/tmp/airflow_on_kill_running", "w") as f:
-            f.write("ON_KILL_RUNNING")
-        self.log.info("Signalled")
+    # Task 2: Sleep for 5 seconds and print 'Done'
+    t2 = BashOperator(
+        task_id='sleep',
+        bash_command='sleep 5 && echo "Done"',
+    )
 
-        # This runs extra processes, so that we can be sure that we correctly
-        # tidy up all processes launched by a task when killing
-        if not os.fork():
-            os.system('sleep 10')
-        time.sleep(10)
+    # Task 3: Create a templated command that prints the dag run's logical date
+    templated_command = """
+    {% for i in range(5) %}
+        echo "{{ ds }}"
+        echo "{{ macros.ds_add(ds, i) }}"
+    {% endfor %}
+    """
 
-    def on_kill(self):
-        self.log.info("Executing on_kill")
-        with open("/tmp/airflow_on_kill_killed", "w") as f:
-            f.write("ON_KILL_TEST")
-        self.log.info("Executed on_kill")
+    t3 = BashOperator(
+        task_id='templated',
+        bash_command=templated_command,
+    )
 
-
-# DAG tests backfill with pooled tasks
-# Previously backfill would queue the task but never run it
-dag1 = DAG(dag_id='test_on_kill', start_date=datetime(2015, 1, 1))
-
-dag1_task1 = DummyWithOnKill(task_id='task1', dag=dag1, owner='airflow')
+    # Set task dependencies
+    t1 >> [t2, t3] # t1 runs first, then t2 and t3 run in parallel

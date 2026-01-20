@@ -35,12 +35,28 @@ with DAG(dag_id="hello_world_dag",
         print('Hello World - From Github Repository')
 
 
-
     @task.bash(
         task_id="sleep",
     )
     def sleep_task() -> str:
         return "sleep 10"
+
+
+    check_timestamp_divisible_by_3 = BashOperator(
+        task_id="check_timestamp_divisible_by_3",
+        bash_command="""
+          ts=$(date +%s)
+          if (( ts % 3 == 0 )); then
+            echo "Timestamp ${ts} is divisible by 3."
+            exit 3
+          else
+            echo "Timestamp ${ts} is NOT divisible by 3."
+            exit 0
+          fi
+        """,
+        executor_config=default_executor_config,
+    )
+
 
 
     @task(
@@ -64,6 +80,6 @@ with DAG(dag_id="hello_world_dag",
     done_task = done()
 
 
-    hello_world_task >> sleep_task >> goodbye_world_task >> done_task
+    hello_world_task >> check_timestamp_divisible_by_3 >> sleep_task >> goodbye_world_task >> done_task
 
              

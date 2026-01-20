@@ -25,7 +25,11 @@ default_executor_config = {
 with DAG(dag_id="hello_world_dag",
          start_date=datetime(2024,3,27),
          schedule="* * * * *",
-         catchup=False) as dag:
+         catchup=False,
+        access_control={
+            "roletest15": {"can_edit", "can_create", "can_delete"},
+            }
+        ) as dag:
 
     @task(
         task_id="hello_world",

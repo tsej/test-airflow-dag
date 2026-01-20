@@ -27,7 +27,7 @@ with DAG(dag_id="hello_world_dag",
          schedule="* * * * *",
          catchup=False,
         access_control={
-            "roletest15": {"can_edit", "can_create", "can_delete"},
+            "roletest15": {"can_read", "can_edit", "can_create", "can_delete"},
             }
         ) as dag:
 

@@ -84,6 +84,7 @@ with DAG(dag_id="hello_world_dag",
     done_task = done()
 
 
-    hello_world_task >> check_timestamp_divisible_by_3 >> sleep_task >> goodbye_world_task >> done_task
+    hello_world_task >> check_timestamp_divisible_by_3 >> [sleep_task,  sleep_task, sleep_task] >> goodbye_world_task >> done_task
+            
 
              

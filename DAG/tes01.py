@@ -46,6 +46,19 @@ with DAG(dag_id="hello_world_dag",
         return "sleep 10"
 
 
+    @task.bash(
+        task_id="sleep1",
+    )
+    def sleep1_task() -> str:
+        return "sleep 10"
+
+    @task.bash(
+        task_id="sleep2",
+    )
+    def sleep2_task() -> str:
+        return "sleep 10"
+
+
     check_timestamp_divisible_by_3 = BashOperator(
         task_id="check_timestamp_divisible_by_3",
         bash_command="""
@@ -84,7 +97,7 @@ with DAG(dag_id="hello_world_dag",
     done_task = done()
 
 
-    hello_world_task >> check_timestamp_divisible_by_3 >> [sleep_task,  sleep_task, sleep_task] >> goodbye_world_task >> done_task
+    hello_world_task >> check_timestamp_divisible_by_3 >> [sleep_task,  sleep1_task, sleep2_task] >> goodbye_world_task >> done_task
             
 
              

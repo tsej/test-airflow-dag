@@ -24,7 +24,7 @@ default_executor_config = {
 } # end of default_executor_config
 
 with DAG(dag_id="hello2_world_dag",
-         start_date=datetime(2024,3,27),
+         start_date=datetime(2025,3,27),
          schedule="* * * * *",
          catchup=False
         ) as dag:

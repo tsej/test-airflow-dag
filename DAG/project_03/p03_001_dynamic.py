@@ -6,7 +6,7 @@ from airflow.decorators import dag, task
 
 @dag(
     start_date=pendulum.datetime(2023, 1, 1, tz="UTC"),
-    schedule_interval=None,
+    schedule=None,
     catchup=False,
     tags=["project_03"],
     doc_md="""

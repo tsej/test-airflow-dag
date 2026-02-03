@@ -1,25 +1,25 @@
+### @TODO It takes too long to prepare the environment 
+#name: Validate DAGs
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  build:
+#    runs-on: archrundev01
+#
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 0
 
-# name: Validate DAGs
-# on:
-#   push:
-#     branches:
-#       - main
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0
-
-#       - name: 'Validate DAGs'
-#         uses: jayamanikharyono/airflow-dag-action@v2.3
-#         with:
+#      - name: 'Validate DAGs'
+#        uses: jayamanikharyono/airflow-dag-action@v2.3
+#        with:
 # #          requirementsFile: tests/requirements.txt
-#           dagPaths: DAG
+#          dagPaths: DAG
 # #          varFile: tests/var.json
 # #          connFile: tests/conns.json
 # #          pluginPaths: tests/plugins

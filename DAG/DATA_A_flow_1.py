@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.decorators import dag, task
-from airflow.operators.dagrun_operator import TriggerDagRunOperator
+from airflow.providers.standard.operators.trigger_dagrun import TriggerDagRunOperator
 
 @dag(start_date=datetime(2025, 3, 6), schedule_interval=None)
 def data_cleaning_dag():

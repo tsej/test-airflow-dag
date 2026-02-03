@@ -4,7 +4,7 @@ from airflow.providers.standard.operators.trigger_dagrun import TriggerDagRunOpe
 from datetime import datetime
 
 
-@dag(start_date=datetime(2025, 3, 6), schedule_interval=None, tags=["project_02"])
+@dag(start_date=datetime(2025, 3, 6), schedule=None, tags=["project_02"])
 def data_processing_dag():
 
     @task()

@@ -25,7 +25,7 @@ default_executor_config = {
 
 with DAG(dag_id="project_01_001",
          start_date=datetime(2025,3,27),
-         schedule=none,
+         schedule=None,
          tags=["project_01"],
          catchup=False
         ) as dag:

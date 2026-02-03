@@ -48,7 +48,7 @@ with DAG(dag_id="hello_world_dag",
     @task.bash(
         task_id="sleep1",
     )
-    def sleep1_task() -> str:
+    def sleep1_task(executor="LocalExecutor") -> str:
         return "sleep 10"
 
     @task.bash(

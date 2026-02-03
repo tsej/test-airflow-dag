@@ -22,8 +22,7 @@ def data_cleaning_dag():
         trigger = TriggerDagRunOperator(
             task_id='trigger_data_processing',
             trigger_dag_id='data_processing_dag',
-            conf={"clean_data": "processed"},
-            dag=data_cleaning_dag
+            conf={"clean_data": "processed"}
         )
         return trigger
 

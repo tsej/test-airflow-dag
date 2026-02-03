@@ -8,6 +8,7 @@ from airflow.decorators import dag, task
     start_date=pendulum.datetime(2023, 1, 1, tz="UTC"),
     schedule_interval=None,
     catchup=False,
+    tags=["project_03"],
     doc_md="""
     ## Dynamic Task Mapping Example
     This DAG dynamically creates a number of 'process_item' tasks based on the list returned by the 'prepare_list' task.

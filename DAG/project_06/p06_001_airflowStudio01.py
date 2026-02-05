@@ -9,7 +9,7 @@ from sas_airflow_provider.operators.sas_delete_session import SASComputeDeleteSe
 dag = DAG(dag_id="airflowStudio01",
    schedule=None,
    start_date=datetime(2026,2,4),
-   tags=["project_05", "sas"],
+   tags=["project_06", "SAS"],
    catchup=False)
 
 task1_code = '''

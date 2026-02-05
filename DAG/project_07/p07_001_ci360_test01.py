@@ -8,7 +8,7 @@ with DAG(
   start_date=datetime(2025, 1, 1),
   schedule=None,
   catchup=False,
-  tags=["project_7", "SAS", "CI360"]
+  tags=["project_07", "SAS", "CI360"]
 ) as dag:
 
 

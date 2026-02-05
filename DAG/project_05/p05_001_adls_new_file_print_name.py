@@ -17,7 +17,7 @@ TIMEOUT_SEC = 12 * 60 * 60                 # 12h safety timeout
     start_date=datetime(2026, 1, 1),
     schedule=None,             # trigger manually, sensor waits until a file arrives
     catchup=False,
-    tags=["project_5", "adls", "azure", "sensor"]
+    tags=["project_05", "adls", "azure", "sensor"]
 )
 def adls_new_file_print_name():
 
